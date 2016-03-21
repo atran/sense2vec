@@ -47,7 +47,8 @@ def parallelize(func, iterator, n_jobs, extra):
 def iter_comments(loc):
     with bz2.BZ2File(loc) as file_:
         for i, line in enumerate(file_):
-            yield ujson.loads(line)['body']
+            # yield ujson.loads(line)['body']
+            yield line.decode("utf-8")
 
 
 pre_format_re = re.compile(r'^[\`\*\~]')
@@ -73,7 +74,7 @@ def load_and_transform(batch_id, in_loc, out_dir):
             for byte_string in Doc.read_bytes(in_file):
                 doc = Doc(nlp.vocab).from_bytes(byte_string)
                 doc.is_parsed = True
-                out_file.write(transform_doc(doc)) 
+                out_file.write(transform_doc(doc))
 
 
 def parse_and_transform(batch_id, input_, out_dir):
@@ -131,7 +132,7 @@ def main(in_loc, out_dir, n_workers=4, load_parses=False):
         jobs = partition(200000, iter_comments(in_loc))
         do_work = parse_and_transform
     parallelize(do_work, enumerate(jobs), n_workers, [out_dir])
- 
+
 
 if __name__ == '__main__':
     plac.call(main)
