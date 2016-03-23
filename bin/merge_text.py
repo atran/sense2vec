@@ -108,13 +108,9 @@ def transform_doc(doc):
 
 def represent_word(word):
     if word.like_url:
-        return '%%URL|X'
+        return ''
     text = re.sub(r'\s', '_', word.text)
-    tag = LABELS.get(word.ent_type_, word.pos_)
-    if not tag:
-        tag = '?'
-    return text + '|' + tag
-
+    return text
 
 @plac.annotations(
     in_loc=("Location of input file"),
@@ -129,7 +125,7 @@ def main(in_loc, out_dir, n_workers=4, load_parses=False):
         jobs = [path.join(in_loc, fn) for fn in os.listdir(in_loc)]
         do_work = load_and_transform
     else:
-        jobs = partition(200000, iter_comments(in_loc))
+        jobs = partition(2000, iter_comments(in_loc))
         do_work = parse_and_transform
     parallelize(do_work, enumerate(jobs), n_workers, [out_dir])
 

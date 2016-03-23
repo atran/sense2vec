@@ -60,3 +60,9 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+.venv
+*.bz2
+*.w2v
+.DS_Store
+process/
